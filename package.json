@@ -1,10 +1,10 @@
 {
   "name": "mcp-fortify",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Security scanner for MCP (Model Context Protocol) configurations",
   "type": "module",
   "bin": {
-    "mcp-fortify": "./dist/bin/mcp-fortify.js"
+    "mcp-fortify": "dist/bin/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

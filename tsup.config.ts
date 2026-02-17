@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup';
 export default defineConfig({
   entry: {
     'cli': 'src/cli.ts',
-    'bin/mcp-fortify': 'bin/mcp-fortify.ts',
+    'bin/cli': 'bin/mcp-fortify.ts',
     'index': 'src/index.ts',
   },
   format: ['esm'],
