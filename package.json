@@ -1,0 +1,45 @@
+{
+  "name": "mcp-fortify",
+  "version": "0.1.0",
+  "description": "Security scanner for MCP (Model Context Protocol) configurations",
+  "type": "module",
+  "bin": {
+    "mcp-fortify": "./dist/bin/mcp-fortify.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "security",
+    "scanner",
+    "model-context-protocol",
+    "claude",
+    "ai-security"
+  ],
+  "author": "Serhan Mert",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "commander": "^13.1.0",
+    "ora": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.6"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
