@@ -1,6 +1,6 @@
 # mcp-fortify
 
-Security scanner for MCP (Model Context Protocol) configurations. Scans your local MCP setup for hardcoded secrets, insecure file permissions, plaintext credentials, and missing security hooks — fully offline, no API keys needed.
+Security scanner for MCP (Model Context Protocol) configurations. Scans your local MCP setup for hardcoded secrets, insecure permissions, command injection risks, and missing security hooks — fully offline, no API keys needed.
 
 ## Why
 
@@ -32,48 +32,71 @@ Auto-discovers and scans these files on your machine:
 | MCP server configs | `~/.claude/mcp-servers/*/` (run.sh, .env, server.py, etc.) |
 | Project config | `.mcp.json` in current directory |
 
-## Security Rules
+## Security Rules (8 rules)
 
 | Rule | Severity | What It Detects |
 |------|----------|-----------------|
 | `hardcoded-secrets` | CRITICAL | API keys, tokens, passwords in any scanned file |
 | `plaintext-env` | CRITICAL | Secrets in JSON config `env` blocks |
+| `command-injection` | CRITICAL | Shell injection vectors in launch scripts and configs |
 | `file-permissions` | HIGH | Config/credential files not restricted to owner-only |
+| `transport-security` | HIGH | HTTP (not HTTPS) endpoints, 0.0.0.0 bindings |
 | `missing-hooks` | MEDIUM | No PreToolUse hooks for secret blocking in Claude Code |
+| `tool-permissions` | MEDIUM | Wildcard tool permissions bypassing safety checks |
+| `missing-gitignore` | MEDIUM | .env files not covered by .gitignore |
+
+## Commands
+
+### `mcp-fortify scan` (default)
+
+Scan MCP configurations for security issues.
+
+```bash
+mcp-fortify                              # Scan with defaults
+mcp-fortify --format json                # JSON output for CI
+mcp-fortify --severity critical --ci     # Fail CI on critical findings
+mcp-fortify --rules hardcoded-secrets    # Run specific rules only
+mcp-fortify --verbose                    # Show all scanned files
+mcp-fortify scan /path/to/project        # Scan custom path
+```
+
+### `mcp-fortify init`
+
+Generate security hooks for Claude Code. Creates a PreToolUse hook that blocks file writes containing secrets.
+
+```bash
+mcp-fortify init
+```
+
+### `mcp-fortify fix`
+
+Auto-remediate fixable issues (file permissions).
+
+```bash
+mcp-fortify fix             # Fix issues
+mcp-fortify fix --dry-run   # Preview what would be fixed
+```
 
 ## CLI Options
 
 ```
-mcp-fortify [scan] [path] [options]
+mcp-fortify [command] [options]
 
-Options:
+Commands:
+  scan [path]     Scan MCP configurations (default)
+  init            Generate security hooks for Claude Code
+  fix             Auto-fix remediable security issues
+
+Scan Options:
   -f, --format <type>     Output format: console | json (default: console)
   -s, --severity <level>  Minimum severity to show (critical|high|medium|low|info)
   --rules <ids>           Comma-separated rule IDs to run
   --no-color              Disable colors
   --verbose               Show all scanned files
   --ci                    Exit code 1 if high+ severity findings
-  -V, --version           Show version
-  -h, --help              Show help
-```
 
-## Examples
-
-```bash
-# Scan with default settings
-mcp-fortify
-
-# JSON output for CI pipelines
-mcp-fortify --format json
-
-# Only critical findings, fail CI if found
-mcp-fortify --severity critical --ci
-
-# Scan specific directory
-mcp-fortify scan /path/to/project
-
-# Run only specific rules
-mcp-fortify --rules hardcoded-secrets,plaintext-env
+Fix Options:
+  --dry-run               Show what would be fixed without making changes
 ```
 
 ## Safe Patterns (Not Flagged)

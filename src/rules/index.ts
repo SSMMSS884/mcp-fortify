@@ -3,6 +3,10 @@ import { HardcodedSecretsRule } from './hardcoded-secrets.js';
 import { PlaintextEnvRule } from './plaintext-env.js';
 import { FilePermissionsRule } from './file-permissions.js';
 import { MissingHooksRule } from './missing-hooks.js';
+import { CommandInjectionRule } from './command-injection.js';
+import { TransportSecurityRule } from './transport-security.js';
+import { ToolPermissionsRule } from './tool-permissions.js';
+import { MissingGitignoreRule } from './missing-gitignore.js';
 
 export function getAllRules(): Rule[] {
   return [
@@ -10,6 +14,10 @@ export function getAllRules(): Rule[] {
     new PlaintextEnvRule(),
     new FilePermissionsRule(),
     new MissingHooksRule(),
+    new CommandInjectionRule(),
+    new TransportSecurityRule(),
+    new ToolPermissionsRule(),
+    new MissingGitignoreRule(),
   ];
 }
 

@@ -1,6 +1,8 @@
 import { Command } from 'commander';
 import { scan, getExitCode } from './scanner.js';
 import { format } from './formatters/index.js';
+import { runInit } from './commands/init.js';
+import { runFix } from './commands/fix.js';
 import type { ScanOptions, Severity } from './types.js';
 
 const VALID_SEVERITIES = ['critical', 'high', 'medium', 'low', 'info'];
@@ -11,7 +13,7 @@ export function createCli(): Command {
   program
     .name('mcp-fortify')
     .description('Security scanner for MCP (Model Context Protocol) configurations')
-    .version('0.1.0');
+    .version('0.2.0');
 
   program
     .command('scan', { isDefault: true })
@@ -47,6 +49,22 @@ export function createCli(): Command {
       if (exitCode !== 0) {
         process.exit(exitCode);
       }
+    });
+
+  program
+    .command('init')
+    .description('Generate security hooks for Claude Code (PreToolUse secret blocking)')
+    .action(() => {
+      runInit();
+    });
+
+  program
+    .command('fix')
+    .description('Auto-fix remediable security issues (file permissions)')
+    .option('--dry-run', 'Show what would be fixed without making changes', false)
+    .action((opts) => {
+      const result = scan({ format: 'console' });
+      runFix(result, opts.dryRun);
     });
 
   return program;
