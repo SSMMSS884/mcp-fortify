@@ -54,8 +54,11 @@ Scan MCP configurations for security issues.
 ```bash
 mcp-fortify                              # Scan with defaults
 mcp-fortify --format json                # JSON output for CI
+mcp-fortify --format sarif               # SARIF for GitHub Security tab
+mcp-fortify --format html -o report.html # HTML report
 mcp-fortify --severity critical --ci     # Fail CI on critical findings
 mcp-fortify --rules hardcoded-secrets    # Run specific rules only
+mcp-fortify --custom-rules ./my-rules.js # Load custom rules
 mcp-fortify --verbose                    # Show all scanned files
 mcp-fortify scan /path/to/project        # Scan custom path
 ```
@@ -77,6 +80,15 @@ mcp-fortify fix             # Fix issues
 mcp-fortify fix --dry-run   # Preview what would be fixed
 ```
 
+## Output Formats
+
+| Format | Use Case |
+|--------|----------|
+| `console` | Terminal output with colors (default) |
+| `json` | CI pipelines, programmatic consumption |
+| `sarif` | GitHub Security tab, CodeQL integration |
+| `html` | Shareable reports, audits |
+
 ## CLI Options
 
 ```
@@ -88,16 +100,43 @@ Commands:
   fix             Auto-fix remediable security issues
 
 Scan Options:
-  -f, --format <type>     Output format: console | json (default: console)
-  -s, --severity <level>  Minimum severity to show (critical|high|medium|low|info)
-  --rules <ids>           Comma-separated rule IDs to run
-  --no-color              Disable colors
-  --verbose               Show all scanned files
-  --ci                    Exit code 1 if high+ severity findings
+  -f, --format <type>       Output format: console | json | sarif | html (default: console)
+  -o, --output <file>       Write output to file instead of stdout
+  -s, --severity <level>    Minimum severity to show (critical|high|medium|low|info)
+  --rules <ids>             Comma-separated rule IDs to run
+  --custom-rules <path>     Path to custom rules module (.js)
+  --no-color                Disable colors
+  --verbose                 Show all scanned files
+  --ci                      Exit code 1 if high+ severity findings
 
 Fix Options:
-  --dry-run               Show what would be fixed without making changes
+  --dry-run                 Show what would be fixed without making changes
 ```
+
+## Custom Rules
+
+Create a `.js` file that exports an array of rule objects:
+
+```javascript
+// my-rules.js
+export default [
+  {
+    id: 'my-custom-rule',
+    name: 'My Custom Rule',
+    severity: 'high',
+    description: 'Checks for something specific',
+    run(targets) {
+      const findings = [];
+      for (const target of targets) {
+        // Your detection logic here
+      }
+      return findings;
+    },
+  },
+];
+```
+
+Then run: `mcp-fortify --custom-rules ./my-rules.js`
 
 ## Safe Patterns (Not Flagged)
 
@@ -114,8 +153,11 @@ mcp-fortify recognizes secure patterns and won't flag them:
 ```typescript
 import { scan, format } from 'mcp-fortify';
 
-const result = scan({ format: 'json' });
+const result = await scan({ format: 'json' });
 console.log(result.findings);
+
+// Generate HTML report
+const html = format(result, 'html');
 ```
 
 ## License

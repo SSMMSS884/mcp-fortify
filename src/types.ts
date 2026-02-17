@@ -33,12 +33,14 @@ export interface ScanResult {
 }
 
 export interface ScanOptions {
-  format: 'console' | 'json';
+  format: 'console' | 'json' | 'sarif' | 'html';
   severity?: Severity;
   rules?: string[];
   verbose?: boolean;
   ci?: boolean;
   path?: string;
+  output?: string;
+  customRules?: string;
 }
 
 export const SEVERITY_ORDER: Record<Severity, number> = {

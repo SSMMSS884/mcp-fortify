@@ -3,8 +3,8 @@ import { scan, getExitCode } from '../src/scanner.js';
 import type { ScanResult } from '../src/types.js';
 
 describe('scan', () => {
-  it('returns a valid ScanResult', () => {
-    const result = scan({ format: 'console' });
+  it('returns a valid ScanResult', async () => {
+    const result = await scan({ format: 'console' });
     expect(result).toHaveProperty('findings');
     expect(result).toHaveProperty('scannedFiles');
     expect(result).toHaveProperty('duration');
@@ -14,15 +14,15 @@ describe('scan', () => {
     expect(typeof result.duration).toBe('number');
   });
 
-  it('filters by severity', () => {
-    const all = scan({ format: 'console' });
-    const criticalOnly = scan({ format: 'console', severity: 'critical' });
+  it('filters by severity', async () => {
+    const all = await scan({ format: 'console' });
+    const criticalOnly = await scan({ format: 'console', severity: 'critical' });
     expect(criticalOnly.findings.length).toBeLessThanOrEqual(all.findings.length);
     criticalOnly.findings.forEach((f) => expect(f.severity).toBe('critical'));
   });
 
-  it('filters by rule IDs', () => {
-    const result = scan({ format: 'console', rules: ['file-permissions'] });
+  it('filters by rule IDs', async () => {
+    const result = await scan({ format: 'console', rules: ['file-permissions'] });
     result.findings.forEach((f) => expect(f.ruleId).toBe('file-permissions'));
   });
 });
